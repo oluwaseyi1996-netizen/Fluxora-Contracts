@@ -280,3 +280,11 @@ All paginated views are tested for:
 - ✅ Full export workflow (accumulate all pages)
 
 See `contracts/stream/src/test.rs` for the complete test suite.
+
+---
+
+## See also
+
+- [docs/upgrade-readiness-checklist.md](./upgrade-readiness-checklist.md) — step-by-step operator checklist for pre-upgrade tests, WASM deployment, data-key migration verification, monitoring thresholds, and rollback triggers.
+- [docs/DEPLOYMENT.md](./DEPLOYMENT.md) — initial testnet deployment guide.
+- [docs/maintainer-security-checklist.md](./maintainer-security-checklist.md) — security review checklist for every release.
