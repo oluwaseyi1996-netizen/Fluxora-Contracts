@@ -4388,3 +4388,74 @@ fn snapshot_no_withdraw_event_when_amount_zero() {
     ctx.client().withdraw(&stream_id);
     assert_eq!(ctx.env.events().all().len(), events_before);
 }
+
+// ---------------------------------------------------------------------------
+// Issue #523: test_accrual_none_checkpoint_returns_zero
+//
+// Exercises the None-branch of CheckpointState lookup in
+// calculate_accrued_amount_checkpointed (accrual.rs line 31).
+//
+// A brand-new stream queried at exactly start_time has no prior checkpoint
+// epoch, so the function must return 0 without panicking.
+// Cross-check: when cliff_time > start_time the same call also returns 0.
+// ---------------------------------------------------------------------------
+
+/// Verifies that `calculate_accrued` returns 0 at exactly `start_time`
+/// for a freshly created stream (no checkpoint has been persisted yet).
+///
+/// This exercises the None-branch of the CheckpointState lookup in
+/// `calculate_accrued_amount_checkpointed` (accrual.rs line 31).
+#[test]
+fn test_accrual_none_checkpoint_returns_zero() {
+    let ctx = TestContext::setup();
+
+    // Stream: start=100, cliff=100, end=1100, rate=1/s, deposit=1000
+    // Queried at exactly start_time (t=100) — no checkpoint exists yet.
+    ctx.env.ledger().set_timestamp(100);
+    let stream_id = ctx.client().create_stream(
+        &ctx.sender,
+        &ctx.recipient,
+        &1000_i128,
+        &1_i128,
+        &100u64,
+        &100u64,
+        &1100u64,
+        &0,
+        &None,
+    );
+
+    // At start_time the elapsed seconds are 0 → accrued must be 0.
+    let accrued = ctx.client().calculate_accrued(&stream_id);
+    assert_eq!(accrued, 0, "accrued at start_time must be 0 (no checkpoint)");
+}
+
+/// Same scenario but with cliff_time > start_time.
+///
+/// Querying before the cliff must also return 0, confirming the cliff guard
+/// fires before any checkpoint arithmetic is attempted.
+#[test]
+fn test_accrual_none_checkpoint_before_cliff_returns_zero() {
+    let ctx = TestContext::setup();
+
+    // Stream: start=0, cliff=500, end=1000, rate=1/s, deposit=1000
+    // Queried at t=0 (start_time, before cliff).
+    ctx.env.ledger().set_timestamp(0);
+    let stream_id = ctx.client().create_stream(
+        &ctx.sender,
+        &ctx.recipient,
+        &1000_i128,
+        &1_i128,
+        &0u64,
+        &500u64,
+        &1000u64,
+        &0,
+        &None,
+    );
+
+    // Before cliff → 0, regardless of checkpoint state.
+    let accrued = ctx.client().calculate_accrued(&stream_id);
+    assert_eq!(
+        accrued, 0,
+        "accrued before cliff must be 0 even with no checkpoint"
+    );
+}
