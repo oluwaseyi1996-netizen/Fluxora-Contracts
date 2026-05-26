@@ -366,3 +366,4 @@ After successful deployment:
 - [Soroban CLI Reference](https://developers.stellar.org/docs/smart-contracts/guides/cli)
 - [Fluxora README](../README.md)
 - [Deployment Script](../script/deploy-testnet.sh)
+- [Upgrade Readiness Checklist](./upgrade-readiness-checklist.md) — end-to-end checklist for CONTRACT_VERSION bumps and WASM rotation
