@@ -1053,6 +1053,8 @@ the signature.
 ### View: `get_withdraw_nonce(recipient)`
 
 Returns the current nonce for a recipient (`0` if never used). Permissionless.
+
+> **See also:** [docs/delegated-withdraw.md](./delegated-withdraw.md) — full signature byte layout, nonce lifecycle, deadline semantics, client-side construction examples (JavaScript and Rust), and security assumptions.
 ## Cross-References
 
 ### Related Documentation
