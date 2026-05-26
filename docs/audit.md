@@ -94,3 +94,5 @@ Auditors can use these as a checklist; the implementation is intended to preserv
 ---
 
 For security patterns (e.g. CEI, reentrancy) see [docs/security.md](security.md).
+
+For the `delegated_withdraw` signature scheme, nonce storage layout, and replay-protection design see [docs/delegated-withdraw.md](delegated-withdraw.md).
